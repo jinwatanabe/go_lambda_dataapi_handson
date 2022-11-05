@@ -13,7 +13,9 @@
         {
           "Effect": "Allow",
           "Action": [
-            "logs:*"
+            "logs:*",
+            "secretsmanager:*",
+            "rds-data:*"
           ],
           "Resource": "*"
         }
@@ -185,7 +187,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/aws-lambda-go-api-proxy-gin/dev/1660471147028-2022-08-14T09:59:07.028Z/aws-lambda-go-api-proxy-gin.zip"
+                "S3Key": "serverless/aws-lambda-go-api-proxy-gin/dev/1667629518110-2022-11-05T06:25:18.110Z/aws-lambda-go-api-proxy-gin.zip"
               },
               "Handler": "bin/main",
               "Runtime": "go1.x",
@@ -203,14 +205,14 @@
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersionPg4VFUNnVdLawM3u1gBk7EIVKgpOrYLc0rhz3gFXad8": {
+          "ApiLambdaVersionoRYB1X32wH02w2aRKVot7yZhoADhHeJiH67QTMv0": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "yktXEt2BW58QT8OqUdAS4qQOKarvhKda4R+PxzKNyxU="
+              "CodeSha256": "dMYylPrgctJBcXpkc8fFYMWFXUOI4syOfsXlL1L8u+I="
             }
           },
           "ApiGatewayRestApi": {
@@ -347,7 +349,7 @@
               "ApiLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1660471143824": {
+          "ApiGatewayDeployment1667629515093": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -410,7 +412,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersionPg4VFUNnVdLawM3u1gBk7EIVKgpOrYLc0rhz3gFXad8"
+              "Ref": "ApiLambdaVersionoRYB1X32wH02w2aRKVot7yZhoADhHeJiH67QTMv0"
             },
             "Export": {
               "Name": "sls-aws-lambda-go-api-proxy-gin-dev-ApiLambdaFunctionQualifiedArn"
@@ -557,7 +559,7 @@
         "memory": 1024,
         "runtime": "go1.x",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersionPg4VFUNnVdLawM3u1gBk7EIVKgpOrYLc0rhz3gFXad8"
+        "versionLogicalId": "ApiLambdaVersionoRYB1X32wH02w2aRKVot7yZhoADhHeJiH67QTMv0"
       }
     },
     "configValidationMode": "warn",
@@ -576,7 +578,7 @@
         ],
         "artifactsS3KeyDirname": "serverless/aws-lambda-go-api-proxy-gin/dev/code-artifacts",
         "artifact": "/go/src/.serverless/aws-lambda-go-api-proxy-gin.zip",
-        "artifactDirectoryName": "serverless/aws-lambda-go-api-proxy-gin/dev/1660471147028-2022-08-14T09:59:07.028Z"
+        "artifactDirectoryName": "serverless/aws-lambda-go-api-proxy-gin/dev/1667629518110-2022-11-05T06:25:18.110Z"
       },
       "custom": {
         "$ref": "$[\"service\"][\"custom\"]"
@@ -590,7 +592,7 @@
     "artifact": "/go/src/.serverless/aws-lambda-go-api-proxy-gin.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/aws-lambda-go-api-proxy-gin/dev/1660471147028-2022-08-14T09:59:07.028Z",
+    "artifactDirectoryName": "serverless/aws-lambda-go-api-proxy-gin/dev/1667629518110-2022-11-05T06:25:18.110Z",
     "artifact": "aws-lambda-go-api-proxy-gin.zip"
   }
 }

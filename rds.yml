@@ -1,0 +1,111 @@
+Parameters:
+  ProjectName:
+    Description: Type of this ProjectName.
+    Type: String
+  VPC:
+    Type: "AWS::EC2::VPC::Id"
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+  DBName:
+    Description: Type of this DatabaseName example sample_db.
+    Type: String
+  DBPassword:
+    Description: Type of this DatabasePassword.
+    Type: String
+
+
+Resources:
+  DBCluster:
+    Type: AWS::RDS::DBCluster
+    Properties:
+      DBClusterIdentifier: !Sub "${ProjectName}-db-cluster"
+      DBSubnetGroupName: !Ref "DBSubnetGroup"
+      DatabaseName: !Sub "${DBName}"
+      Engine: aurora-mysql
+      EngineMode: "serverless"
+      EngineVersion: "5.7.mysql_aurora.2.10.2"
+      DBClusterParameterGroupName: !Ref DBParameterGroup
+      MasterUserPassword: !Sub "${DBPassword}"
+      MasterUsername: admin
+      StorageEncrypted: true
+      ScalingConfiguration:
+        MinCapacity: 1
+        AutoPause: false
+        MaxCapacity: 2
+      VpcSecurityGroupIds:
+        - !Ref AuroraSecurityGroup
+      DBSubnetGroupName: !Ref DBSubnetGroup
+    DeletionPolicy: Delete
+
+  # ------------------------------------------------------------#
+  #  parameter group
+  # ------------------------------------------------------------#
+  DBParameterGroup:
+    Type: AWS::RDS::DBClusterParameterGroup
+    Properties:
+      Family: aurora-mysql5.7
+      Description: Database Parameter Group
+      Parameters:
+        character_set_database: utf8mb4
+        character_set_client: utf8mb4
+        character_set_connection: utf8mb4
+        character_set_results: utf8mb4
+        character_set_server: utf8mb4
+        time_zone: Asia/Tokyo
+
+  # ------------------------------------------------------------#
+  #  subnet group
+  # ------------------------------------------------------------#
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupName: !Sub "${ProjectName}-db-subnet-group"
+      DBSubnetGroupDescription: for db
+      SubnetIds: !Split [",", !Join [",", !Ref SubnetIds]]
+
+  # ------------------------------------------------------------#
+  #  security group
+  # ------------------------------------------------------------#
+  AuroraSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SecurityGroup for Aurora
+      VpcId: !Sub "${VPC}"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 10.0.1.0/24
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${ProjectName}-db-sg"
+    # DependsOn: VPC
+
+  # ------------------------------------------------------------#
+  #  secret manager
+  # ------------------------------------------------------------#
+  SecretManager:
+    Type: AWS::SecretsManager::Secret
+    Properties: 
+      Description: "Secrets Manager for RDS"
+      SecretString:
+        !Sub '{"username": "admin","password": "${DBPassword}"}'
+      Name: !Sub "${ProjectName}-Secrets"
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-Secrets
+
+  SecretManagerAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties: 
+      SecretId: !Ref SecretManager
+      TargetId: !Ref DBCluster
+      TargetType: AWS::RDS::DBCluster
+
+Outputs:
+  Endpoint:
+    Value: !GetAtt DBCluster.Endpoint.Address
+  ResourceArn:
+    Value: !Sub "arn:aws:rds:ap-northeast-1:${AWS::AccountId}:cluster:${ProjectName}-db-cluster"
+  SecretArn:
+    Value: !Ref SecretManagerAttachment

@@ -9,6 +9,8 @@ provider:
     - Effect: "Allow"
       Action:
         - "logs:*"
+        - "secretsmanager:*"
+        - "rds-data:*"
       Resource: "*"
 
 package:
